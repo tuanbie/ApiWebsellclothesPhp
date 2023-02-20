@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KhachhangController;
+use App\Http\Controllers\SanphamController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,5 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::resource('khachhang', KhachhangController::class);
+Route::resource('sanpham', SanphamController::class);
 
 
