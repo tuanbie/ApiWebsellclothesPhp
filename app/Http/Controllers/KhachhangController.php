@@ -15,22 +15,13 @@ class KhachhangController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index()
     {
-        $khachhangs = khachhang::select('ten', 'sdt', 'diachi')->get();
+        $khachhangs = khachhang::select('id','ten', 'sdt', 'diachi')->get();
         return response()->json($khachhangs);
-        
-
-        // $customers = khachhang::select('ten', 'sdt', 'diachi')->get();
-        // // $customers = khachhang::all();
-        // return response()->json($customers);
-        // // return redirect()->json($customers);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request): Response
+    public function store(Request $request)
     {
         $input = $request->all(); 
         $validator = Validator::make($input, [
