@@ -21,32 +21,36 @@ class KhachhangController extends Controller
         return response()->json($khachhangs);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, khachhang $khachhangs)
     {
-        $input = $request->all(); 
+        $input = $request->all();
         $validator = Validator::make($input, [
-        'ten' => 'required', 'sdt' => 'required','diachi' => 'required'
+            'ten' => 'required', 'sdt' => 'required', 'diachi' => 'required'
         ]);
         if($validator->fails()){
             $arr = [
             'success' => false,
-            'message' => 'Lỗi kiểm tra dữ liệu',
+            'message' => 'Lỗi dữ liệu đầu vào',
             'data' => $validator->errors()
             ];
             return response()->json($arr, 200);
         }
-        $product = khachhang::create($input);
-        $arr = ['status' => true,
-            'message'=>"Khách hàng đã lưu thành công",
-            'data'=> new KhachhangResource($product)
+        $khachhangs->ten = $input['ten'];
+        $khachhangs->sdt = $input['sdt'];
+        $khachhangs->diachi = $input['diachi'];
+        $khachhangs->save();
+        $arr = [
+            'status' => true,
+            'message' => 'Thêm thành công',
+            'data' => new KhachhangResource($khachhangs)
         ];
-        return response()->json($arr, 201);
+        return response()->json($arr, 200);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id): Response
+    public function show(string $id)
     {
         
     }
@@ -54,16 +58,43 @@ class KhachhangController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): Response
+    public function update(Request $request, khachhang $product)
     {
-        //
+        // $input = $request->all();
+        // $validator = Validator::make($input, [
+        //     'ten' => 'required', 'sdt' => 'required', 'diachi' => 'required'
+        // ]);
+        // if($validator->fails()){
+        //     $arr = [
+        //     'success' => false,
+        //     'message' => 'Lỗi kiểm tra dữ liệu',
+        //     'data' => $validator->errors()
+        //     ];
+        //     return response()->json($arr, 200);
+        // }
+        // $product->ten = $input['ten'];
+        // $product->sdt = $input['sdt'];
+        // $product->diachi = $input['diachi'];
+        // $product->save();
+        // $arr = [
+        //     'status' => true,
+        //     'message' => 'Khách hàng cập nhật thành công',
+        //     'data' => new KhachhangResource($product)
+        // ];
+        // return response()->json($arr, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): Response
+    public function destroy(khachhang $product)
     {
-        //
+        $product->delete();
+        $arr = [
+           'status' => true,
+           'message' =>'Sản phẩm đã được xóa',
+           'data' => [],
+        ];
+        return response()->json($arr, 200);
     }
 }

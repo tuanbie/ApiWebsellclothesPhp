@@ -10,6 +10,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use App\Models\sanpham;
 use App\http\Requests\SanphamStoreRequest;
+use App\Http\Resources\Sanpham as SanphamResource;
+
 
 class SanphamController extends Controller
 {
@@ -57,12 +59,13 @@ class SanphamController extends Controller
      
             // Return Json Response
             return response()->json([
-                'message' => "Product successfully created."
+                'message' => "Thêm sản phẩm thành công !",
+                'data' => new SanphamResource(sanpham)
             ],200);
         } catch (\Exception $e) {
             // Return Json Response
             return response()->json([
-                'message' => "Something went really wrong!"
+                'message' => "Lỗi!"
             ],500);
         }
     }
@@ -89,9 +92,50 @@ class SanphamController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(SanphamStoreRequest $request,string $id)
     {
-        //
+        // try {
+        //     // Find product
+        //     $product = sanpham::find($id);
+        //     if(!$product){
+        //       return response()->json([
+        //         'message'=>'Product Not Found.'
+        //       ],404);
+        //     }
+     
+        //     $product->ten = $request->ten;
+        //     $product->mota = $request->mota;
+        //     $product->trangthai = $request->trangthai;
+        //     $product->soluong = $request->soluong;
+        //     if($request->hinh) {
+        //         // Public storage
+        //         $storage = Storage::disk('public');
+     
+        //         // Old iamge delete
+        //         if($storage->exists($product->hinh))
+        //             $storage->delete($product->hinh);
+     
+        //         // Image name
+        //         $imageName = Str::random(32).".".$request->hinh->getClientOriginalExtension();
+        //         $product->hinh = $imageName;
+     
+        //         // Image save in public folder
+        //         $storage->put($imageName, file_get_contents($request->hinh));
+        //     }
+     
+        //     // Update Product
+        //     $product->save();
+     
+        //     // Return Json Response
+        //     return response()->json([
+        //         'message' => "Product successfully updated."
+        //     ],200);
+        // } catch (\Exception $e) {
+        //     // Return Json Response
+        //     return response()->json([
+        //         'message' => "Something went really wrong!"
+        //     ],500);
+        // }
     }
 
     /**

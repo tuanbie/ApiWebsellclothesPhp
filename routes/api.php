@@ -19,6 +19,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Route::get('SanPham', [SanphamController::class, 'index']); 
+// Route::get('LaySanPhamTheoId/{id}', [SanphamController::class, 'show']); 
+// Route::post('ThemSanPham', [SanphamController::class, 'store']); 
+// Route::put('CapNhatSanPham/{id}', [SanphamController::class, 'update']);
+// Route::delete('XoaSanPham/{id}', [SanphamController::class, 'destroy']);
+
 Route::resource('khachhang', KhachhangController::class);
 Route::resource('sanpham', SanphamController::class);
 
