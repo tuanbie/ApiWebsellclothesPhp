@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('ten');
             $table->string('sdt');
+            $table->string('email');
             $table->string('diachi');
             $table->timestamps();
         });

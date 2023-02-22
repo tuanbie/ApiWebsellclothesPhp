@@ -17,7 +17,7 @@ class KhachhangController extends Controller
      */
     public function index()
     {
-        $khachhangs = khachhang::select('id','ten', 'sdt', 'diachi')->get();
+        $khachhangs = khachhang::select('id','ten', 'sdt','email', 'diachi')->get();
         return response()->json($khachhangs);
     }
 
@@ -25,7 +25,7 @@ class KhachhangController extends Controller
     {
         $input = $request->all();
         $validator = Validator::make($input, [
-            'ten' => 'required', 'sdt' => 'required', 'diachi' => 'required'
+            'ten' => 'required', 'sdt' => 'required', 'email' => 'required','diachi' => 'required'
         ]);
         if($validator->fails()){
             $arr = [
@@ -37,6 +37,7 @@ class KhachhangController extends Controller
         }
         $khachhangs->ten = $input['ten'];
         $khachhangs->sdt = $input['sdt'];
+        $khachhangs->email = $input['email'];
         $khachhangs->diachi = $input['diachi'];
         $khachhangs->save();
         $arr = [
@@ -58,38 +59,46 @@ class KhachhangController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, khachhang $product)
-    {
-        // $input = $request->all();
-        // $validator = Validator::make($input, [
-        //     'ten' => 'required', 'sdt' => 'required', 'diachi' => 'required'
-        // ]);
-        // if($validator->fails()){
-        //     $arr = [
-        //     'success' => false,
-        //     'message' => 'Lỗi kiểm tra dữ liệu',
-        //     'data' => $validator->errors()
-        //     ];
-        //     return response()->json($arr, 200);
-        // }
-        // $product->ten = $input['ten'];
-        // $product->sdt = $input['sdt'];
-        // $product->diachi = $input['diachi'];
-        // $product->save();
-        // $arr = [
-        //     'status' => true,
-        //     'message' => 'Khách hàng cập nhật thành công',
-        //     'data' => new KhachhangResource($product)
-        // ];
-        // return response()->json($arr, 200);
+    public function update(Request $request, khachhang $khachhangs, $id)
+    {   
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            'ten' => 'required', 'sdt' => 'required', 'email' => 'required', 'diachi' => 'required'
+        ]);
+        if($validator->fails()){
+            $arr = [
+            'success' => false,
+            'message' => 'Lỗi dữ liệu đầu vào',
+            'data' => $validator->errors()
+            ];
+            return response()->json($arr, 200);
+        }
+        $khachhang = $khachhangs->find($id);
+        if(!$khachhang){
+            $arr = [
+                'status' => false,
+                'message' => 'Không tìm thấy khách hàng',
+            ];
+            return response()->json($arr, 404);
+        }
+        $khachhang->ten = $input['ten'];
+        $khachhang->sdt = $input['sdt'];
+        $khachhang->diachi = $input['diachi'];
+        $khachhang->save();
+        $arr = [
+            'status' => true,
+            'message' => 'Cập nhật thành công',
+            'data' => new KhachhangResource($khachhang)
+        ];
+        return response()->json($arr, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(khachhang $product)
+    public function destroy(khachhang $khachhangs)
     {
-        $product->delete();
+        $khachhangs->delete();
         $arr = [
            'status' => true,
            'message' =>'Sản phẩm đã được xóa',

@@ -15,38 +15,29 @@ use App\Http\Resources\Sanpham as SanphamResource;
 
 class SanphamController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-         // All Product
+        //tất acr sản phẩm
        $products = sanpham::all();
      
-       // Return Json Response
+       // trả về json
        return response()->json([
           'products' => $products
        ],200);
+       
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(): Response
     {
         //
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(SanphamStoreRequest $request)
     {
         try {
+        
             $hinh = Str::random(32).".".$request->hinh->getClientOriginalExtension();
      
-            // Create Product
-            sanpham::create([
+            // thêm sản pahamr
+            $sanpham = sanpham::create([
                 'ten' => $request->ten,
                 'hinh' => $hinh,
                 'mota' => $request->mota,
@@ -54,25 +45,19 @@ class SanphamController extends Controller
                 'soluong' => $request->soluong,
             ]);
      
-            // Save Image in Storage folder
+            // thêm hình vào thư mục storage liên kết với server
             Storage::disk('public')->put($hinh, file_get_contents($request->hinh));
-     
-            // Return Json Response
+    
             return response()->json([
                 'message' => "Thêm sản phẩm thành công !",
-                'data' => new SanphamResource(sanpham)
+                'data' => $sanpham
             ],200);
         } catch (\Exception $e) {
-            // Return Json Response
             return response()->json([
                 'message' => "Lỗi!"
             ],500);
         }
     }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
          // Product Detail 
@@ -89,130 +74,75 @@ class SanphamController extends Controller
        ],200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(SanphamStoreRequest $request,string $id)
     {
-        // try {
-        //     // Find product
-        //     $product = sanpham::find($id);
-        //     if(!$product){
-        //       return response()->json([
-        //         'message'=>'Product Not Found.'
-        //       ],404);
-        //     }
-     
-        //     $product->ten = $request->ten;
-        //     $product->mota = $request->mota;
-        //     $product->trangthai = $request->trangthai;
-        //     $product->soluong = $request->soluong;
-        //     if($request->hinh) {
-        //         // Public storage
-        //         $storage = Storage::disk('public');
-     
-        //         // Old iamge delete
-        //         if($storage->exists($product->hinh))
-        //             $storage->delete($product->hinh);
-     
-        //         // Image name
-        //         $imageName = Str::random(32).".".$request->hinh->getClientOriginalExtension();
-        //         $product->hinh = $imageName;
-     
-        //         // Image save in public folder
-        //         $storage->put($imageName, file_get_contents($request->hinh));
-        //     }
-     
-        //     // Update Product
-        //     $product->save();
-     
-        //     // Return Json Response
-        //     return response()->json([
-        //         'message' => "Product successfully updated."
-        //     ],200);
-        // } catch (\Exception $e) {
-        //     // Return Json Response
-        //     return response()->json([
-        //         'message' => "Something went really wrong!"
-        //     ],500);
-        // }
+        
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(SanphamStoreRequest $request, string $id)
+    public function update(SanphamStoreRequest $request, string $id)//cập nhật
     {
         try {
-            // Find product
+            //tìm kienems ản phẩm
             $product = sanpham::find($id);
             if(!$product){
               return response()->json([
-                'message'=>'Product Not Found.'
+                'message'=>'Không tìm thấy sản phẩm'
               ],404);
             }
-     
+            //kiểm tra thông tin đầu vào
             $product->ten = $request->ten;
             $product->mota = $request->mota;
             $product->trangthai = $request->trangthai;
             $product->soluong = $request->soluong;
+            //cập nhật hình ảnh
             if($request->hinh) {
-                // Public storage
                 $storage = Storage::disk('public');
-     
-                // Old iamge delete
                 if($storage->exists($product->hinh))
                     $storage->delete($product->hinh);
-     
-                // Image name
                 $imageName = Str::random(32).".".$request->hinh->getClientOriginalExtension();
                 $product->hinh = $imageName;
-     
-                // Image save in public folder
                 $storage->put($imageName, file_get_contents($request->hinh));
             }
-     
-            // Update Product
+            //lưu sản phẩm vào db
             $product->save();
-     
-            // Return Json Response
             return response()->json([
-                'message' => "Product successfully updated."
+                'message' => "Sửa sản phẩm thành công",
+                'data'=>[
+                    'id' => $product->id,
+                    'ten' => $product->ten,
+                    'mota' => $product->mota,
+                    'trangthai' => $product->trangthai,
+                    'soluong' => $product->soluong,
+                    'hinh' => $product->hinh,
+                    'created_at' => $product->created_at->format('d/m/Y H:i:s'),
+                    'updated_at' => $product->updated_at->format('d/m/Y H:i:s'),
+                ]
             ],200);
         } catch (\Exception $e) {
-            // Return Json Response
             return response()->json([
-                'message' => "Something went really wrong!"
+                'message' => "Lỗi!"
             ],500);
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
+    public function destroy($id)//xóa sản phẩm
     {
-        // Detail 
         $product = sanpham::find($id);
         if(!$product){
           return response()->json([
-             'message'=>'Product Not Found.'
+             'message'=>'Không tim thấy sản phẩm.'
           ],404);
         }
      
-        // Public storage
         $storage = Storage::disk('public');
      
-        // Iamge delete
         if($storage->exists($product->hinh))
             $storage->delete($product->hinh);
      
-        // Delete Product
         $product->delete();
      
-        // Return Json Response
         return response()->json([
-            'message' => "Product successfully deleted."
+            'message' => "Xóa sản phẩm thành công!"
         ],200);
     }
 }
