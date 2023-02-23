@@ -53,57 +53,72 @@ class KhachhangController extends Controller
      */
     public function show(string $id)
     {
-        
+        $khachhang = khachhang::find($id);
+        if(!$khachhang){
+          return response()->json([
+             'message'=>'Không tìm thấy khách hàng!.'
+          ],404);
+        }
+      
+        // Return Json Response
+        return response()->json([
+           'khachhang' => $khachhang
+        ],200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, khachhang $khachhangs, $id)
+    public function update(Request $request, $id)
     {   
-        $input = $request->all();
-        $validator = Validator::make($input, [
-            'ten' => 'required', 'sdt' => 'required', 'email' => 'required', 'diachi' => 'required'
-        ]);
-        if($validator->fails()){
-            $arr = [
-            'success' => false,
-            'message' => 'Lỗi dữ liệu đầu vào',
-            'data' => $validator->errors()
-            ];
-            return response()->json($arr, 200);
+        try {
+            //tìm kiếm khách hàng
+            $khachhang = khachhang::find($id);
+            if(!$khachhang){
+              return response()->json([
+                'message'=>'Không tìm thấy khách hàng'
+              ],404);
+            }
+
+            $khachhang->ten = $request->ten;
+            $khachhang->sdt = $request->sdt;
+            $khachhang->email = $request->email;
+            $khachhang->diachi = $request->diachi;
+            //lưu khách hàng vào db
+            $khachhang->save();
+            return response()->json([
+                'message' => "Sửa sản phẩm thành công",
+                'data'=>[
+                    'id' => $khachhang->id,
+                    'ten' => $khachhang->ten,
+                    'mota' => $khachhang->sdt,
+                    'trangthai' => $khachhang->email,
+                    'soluong' => $khachhang->diachi,
+                    'created_at' => $khachhang->created_at->format('d/m/Y H:i:s'),
+                    'updated_at' => $khachhang->updated_at->format('d/m/Y H:i:s'),
+                ]
+            ],200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => "Lỗi!"
+            ],500);
         }
-        $khachhang = $khachhangs->find($id);
-        if(!$khachhang){
-            $arr = [
-                'status' => false,
-                'message' => 'Không tìm thấy khách hàng',
-            ];
-            return response()->json($arr, 404);
-        }
-        $khachhang->ten = $input['ten'];
-        $khachhang->sdt = $input['sdt'];
-        $khachhang->diachi = $input['diachi'];
-        $khachhang->save();
-        $arr = [
-            'status' => true,
-            'message' => 'Cập nhật thành công',
-            'data' => new KhachhangResource($khachhang)
-        ];
-        return response()->json($arr, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(khachhang $khachhangs)
+    public function destroy($id)
     {
-        $khachhangs->delete();
-        $arr = [
-           'status' => true,
-           'message' =>'Sản phẩm đã được xóa',
-           'data' => [],
-        ];
-        return response()->json($arr, 200);
+        $khachhang = khachhang::find($id);
+        if(!$khachhang){
+          return response()->json([
+             'message'=>'Không tim thấy khách hàng.'
+          ],404);
+        }
+        $khachhang->delete();
+        return response()->json([
+            'message' => "Xóa khách hàng thành công!"
+        ],200);
     }
 }

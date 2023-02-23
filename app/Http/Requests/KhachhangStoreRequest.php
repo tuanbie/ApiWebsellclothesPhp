@@ -3,14 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\sanpham;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-class SanphamStoreRequest extends FormRequest
+
+class KhachhangStoreRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
@@ -19,11 +14,10 @@ class SanphamStoreRequest extends FormRequest
     {
         if(request()->isMethod('post')) {
             return [
-                'ten' => 'required|string|max:258',
-                'hinh' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'ten' => 'required|string|max:255',
                 'mota' => 'required|string',
-                'trangthai' => 'required|string',
-                'soluong'=>'required|string'
+                'trangthai' => 'required|integer',
+                'soluong' => 'required|integer|min:0',
             ];
         } else {
             return [
