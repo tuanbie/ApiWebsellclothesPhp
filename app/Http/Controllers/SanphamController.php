@@ -33,7 +33,6 @@ class SanphamController extends Controller
     public function store(SanphamStoreRequest $request)
     {
         try {
-        
             $hinh = Str::random(32).".".$request->hinh->getClientOriginalExtension();
      
             // thêm sản pahamr
@@ -48,9 +47,19 @@ class SanphamController extends Controller
             // thêm hình vào thư mục storage liên kết với server
             Storage::disk('public')->put($hinh, file_get_contents($request->hinh));
     
+            $imageLink = Storage::url($hinh);
+            
             return response()->json([
                 'message' => "Thêm sản phẩm thành công !",
-                'data' => $sanpham
+                'data' => [
+                    'id' => $sanpham->id,
+                    'ten' => $sanpham->ten,
+                    'hinh' => $imageLink,
+                    'mota' => $sanpham->mota,
+                    'trangthai' => $sanpham->trangthai,
+                    'soluong' => $sanpham->soluong,
+                    'created_at' => $sanpham->created_at->format('d/m/Y H:i:s'),
+                    'updated_at' => $sanpham->updated_at->format('d/m/Y H:i:s'),]
             ],200);
         } catch (\Exception $e) {
             return response()->json([
@@ -105,6 +114,7 @@ class SanphamController extends Controller
             }
             //lưu sản phẩm vào db
             $product->save();
+            $imageLink = Storage::url($imageName);
             return response()->json([
                 'message' => "Sửa sản phẩm thành công",
                 'data'=>[
@@ -113,7 +123,7 @@ class SanphamController extends Controller
                     'mota' => $product->mota,
                     'trangthai' => $product->trangthai,
                     'soluong' => $product->soluong,
-                    'hinh' => $product->hinh,
+                    'hinh' => $imageLink,
                     'created_at' => $product->created_at->format('d/m/Y H:i:s'),
                     'updated_at' => $product->updated_at->format('d/m/Y H:i:s'),
                 ]
