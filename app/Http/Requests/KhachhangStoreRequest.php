@@ -18,6 +18,7 @@ class KhachhangStoreRequest extends FormRequest
                 'mota' => 'required|string',
                 'trangthai' => 'required|integer',
                 'soluong' => 'required|integer|min:0',
+                'matkhau' => 'required|string',
             ];
         } else {
             return [
@@ -25,7 +26,8 @@ class KhachhangStoreRequest extends FormRequest
                 'hinh' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'mota' => 'required|string',
                 'trangthai' => 'required|string',
-                'soluong'=>'required|string'
+                'soluong'=>'required|string',
+                'matkhau' => 'required|string',
             ];
         }
     }

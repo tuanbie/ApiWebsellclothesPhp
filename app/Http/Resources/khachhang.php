@@ -21,6 +21,7 @@ class khachhang extends JsonResource
             'sdt' => $this->sdt,
             'email' => $this->email,
             'diachi' => $this->diachi,
+            'matkhau' => $this->matkhau,
             'created_at' => $this->created_at->format('d/m/Y'),
             'updated_at' => $this->updated_at->format('d/m/Y'),
           ];

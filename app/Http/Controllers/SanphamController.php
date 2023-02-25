@@ -17,18 +17,24 @@ class SanphamController extends Controller
 {
     public function index()
     {
-        //tất acr sản phẩm
-       $products = sanpham::all();
-     
-       // trả về json
-       return response()->json([
-          'products' => $products
-       ],200);
-       
+        $products = sanpham::select(
+            'id',
+            'ten', 
+            'hinh',
+            'mota',
+            'trangthai',
+            'soluong',
+            'created_at',
+            'updated_at'
+            )->get()->map(function ($product) {
+            $product['hinh'] = $imageLink = Storage::url( $product['hinh']);
+            return $product;
+        });
+        return response()->json(['products' => $products], 200);
     }
-    public function create(): Response
+    public function create()
     {
-        //
+        
     }
     public function store(SanphamStoreRequest $request)
     {
