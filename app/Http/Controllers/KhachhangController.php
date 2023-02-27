@@ -95,7 +95,7 @@ class KhachhangController extends Controller
             //lưu khách hàng vào db
             $khachhang->save();
             return response()->json([
-                'message' => "Sửa sản phẩm thành công",
+                'message' => "Sửa thông tin khách hàng thành công",
                 'data'=>[
                     'id' => $khachhang->id,
                     'ten' => $khachhang->ten,
@@ -157,13 +157,13 @@ class KhachhangController extends Controller
                 'data' => null
             ], 200);
         }
-        $token = $khachhang->createToken('token')->accessToken;
+        // $token = $khachhang->createToken('token')->accessToken;
         return response()->json([
             'status' => true,
             'message' => 'Đăng nhập thành công',
             'data' => [
                 'khachhang' => new KhachhangResource($khachhang),
-                'access_token' => $token
+                // 'access_token' => $token
             ]
         ], 200);
     }

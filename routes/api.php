@@ -20,5 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::resource('khachhang', KhachhangController::class);
 Route::resource('sanpham', SanphamController::class);
 Route::resource('hoadon', HoadonController::class);
-// Route::post('login', [KhachhangController::class, 'login']); 
+Route::post('login', [KhachhangController::class, 'login']); 
 // Route::post('/login', 'KhachhangController@login');

@@ -75,15 +75,14 @@ class SanphamController extends Controller
     }
     public function show(string $id)
     {
-         // Product Detail 
        $product = sanpham::find($id);
        if(!$product){
          return response()->json([
             'message'=>'Product Not Found.'
          ],404);
        }
-     
-       // Return Json Response
+       $imageLink = Storage::url($product->hinh);
+       $product->hinh = $imageLink;
        return response()->json([
           'product' => $product
        ],200);
