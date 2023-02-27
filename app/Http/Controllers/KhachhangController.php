@@ -39,29 +39,38 @@ class KhachhangController extends Controller
         ]);
         if($validator->fails()){
             $arr = [
-            'success' => false,
-            'message' => 'Lỗi dữ liệu đầu vào',
-            'data' => $validator->errors()
+                'success' => false,
+                'message' => 'Lỗi dữ liệu đầu vào',
+                'data' => $validator->errors()
             ];
             return response()->json($arr, 200);
         }
-        $khachhangs->ten = $input['ten'];
-        $khachhangs->sdt = $input['sdt'];
-        $khachhangs->email = $input['email'];
-        $khachhangs->diachi = $input['diachi'];
-        $khachhangs->matkhau = bcrypt($input['matkhau']);
-        $khachhangs->save();
-        $arr = [
-            'status' => true,
-            'message' => 'Thêm thành công',
-            'data' => new KhachhangResource($khachhangs)
-        ];
-        return response()->json($arr, 200);
+        try {
+            $khachhangs->ten = $input['ten'];
+            $khachhangs->sdt = $input['sdt'];
+            $khachhangs->email = $input['email'];
+            $khachhangs->diachi = $input['diachi'];
+            $khachhangs->matkhau = bcrypt($input['matkhau']);
+            $khachhangs->save();
+            $arr = [
+                'status' => true,
+                'message' => 'Thêm thành công',
+                'data' => new KhachhangResource($khachhangs)
+            ];
+            return response()->json($arr, 200);
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            if ($errorCode == 1062) { // mã lỗi của khóa trùng lặp
+                $arr = [
+                    'status' => false,
+                    'message' => 'Email đã tồn tại',
+                    'data' => null
+                ];
+                return response()->json($arr, 200);
+            }
+    }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id) //show custommer by id
     {
         $khachhang = khachhang::find($id);
